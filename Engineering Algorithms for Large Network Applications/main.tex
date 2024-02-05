@@ -71,6 +71,9 @@ Additionally, to facilitate memory-intensive pre-computations and/or run-times r
 \end{table}
 
 \section{Algorithms}
+
+The author experimented with several algorithms specific to Graph Annotation and Auxiliary Graph approaches aimed at minimizing the Average Visits and Average Query Time of the baseline algorithm. The author chose Dijkstra's Algorithm to be the best line since there were no negative weights in the experimented dataset. The following comparison algorithm shows a variety of approaches from Heuristics (Approximation), Graph Annotation through Containerization of Vertices, and Minimizing the Graph through an Auxiliary Graph. 
+
 \subsection{Dijkstra (Baseline)}
 
 Dijkstra's algorithm serves as the baseline of this analysis. It's 
@@ -81,12 +84,6 @@ complexity of \(O(E \ log \ V)\). Overall, the goal of the next few
 implementations are to reduce the baseline search space (Average Visits).
 
 \subsection{A* Haversine Distance}
-
-Given the dataset has information on the vertex geographic coordinates,
-the author pursues an approach to construct a heuristic that estimates the
-neighboring vertex against the end vertex during the search. These additional information supplemented to the vertices enters the approach of Graph Annotation where it can make calculations to extend the baseline algorithm further. To calculate
-the distance between neighboring vertex and end vertex, the
-\href{https://en.wikipedia.org/wiki/Haversine_formula}{Haversine Formula} is used on both geographic coordinates.
 
 \begin{algorithm}
 \caption{Relaxation with Haversine Distance Heuristic}\label{alg:cap}
@@ -100,7 +97,21 @@ the distance between neighboring vertex and end vertex, the
 \label{algorithm:relaxH}
 \end{algorithm}
 
-Algorithm \ref{algorithm:relaxH} shows a modified `RELAX` function with 
+Given the dataset has information on the vertex geographic coordinates,
+the author pursues an approach to construct a heuristic that estimates the
+neighboring vertex against the end vertex during the search. These additional information supplemented to the vertices enters the approach of Graph Annotation where it can make calculations to extend the baseline algorithm further. To approximate the distance between neighboring vertex and end vertex, the Haversine Formula (defined by Equation \ref{hav} \& \ref{havD}) is used on both geographic coordinates. 
+
+\begin{equation}
+    hav(\theta) = \sin^2\left(\frac{\Delta\text{lat}}{2}\right) + \cos(\text{lat}_1) \cdot \cos(\text{lat}_2) \cdot \sin^2\left(\frac{\Delta\text{lon}}{2}\right)
+\label{hav}
+\end{equation}
+
+\begin{equation}
+    distance = 2 \cdot R \cdot \text{atan2}\left(\sqrt{hav(\theta)}, \sqrt{1 - hav(\theta)}\right)
+\label{havD}
+\end{equation}
+
+This approximation is reliable for every calculation within the experimented dataset because the weight function correlates with the Haversine Distance, giving the algorithm clear approximations between the source and the target. Moreover, Algorithm \ref{algorithm:relaxH} shows a modified `RELAX` function with 
 addition of the heuristic of `H(v, e)` which calculates the distance. `H(v, 
 e)` will continuously be smaller if the neighboring vertex is closing in to 
 the end vertex. Intuitively, this will decrease the Average Visits per Query
@@ -114,7 +125,7 @@ space further through methods of pre-computations. This method involves construc
 `container,` which comprises of sets of vertices strategically chosen to 
 enhance efficiency in subsequent shortest-path computations. In Figure \ref{fig:geoconstruct}, the algorithm iterates over all vertices to enlarge $C(u, v)$ with vertex encountered from the single-source of $s$. This will include all vertices visited from $s$ to $v$ to enter the container.
 
-\begin{figure}
+\begin{figure}[b!]
     \centering
     \includegraphics[width=0.7\linewidth]{img/container.png}
     \caption{Geometric Container Construction (Wagner et al., 2005)}
@@ -130,7 +141,7 @@ These containers play a pivotal role in restricting the search space of Dijkstra
     \label{fig:geodijkstra}
 \end{figure}
 
-Moreover, this algorithm falls into the category of approach of Graph Annotation since it is supplying additional information between edges. Further analyzing the algorithms complexity, constructing the containers takes a time complexity of $O(E \ log \ V * V)$ with a space complexity stated to be $O(n)$. This is due to computing for all vertices. As for the search algorithm, the time complexity remains $O(E \ log \ V)$.
+Moreover, this algorithm falls into the category of approach of Graph Annotation since it is supplying additional information between edges. Further analyzing the algorithms complexity, constructing the containers takes a time complexity of $O((E \ log \ V) * V)$ with a space complexity stated to be $O(E * V)$. This is due to computing for all vertices. As for the search algorithm, the time complexity remains $O(E \ log \ V)$.
 
 \subsection{Min Overlay Graph}
 
@@ -148,13 +159,13 @@ aid or solve the problem entirely.
 
 Figure \ref{fig:minoverlay} illustrates the construction process of the Min Overlay Graph. This method leverages a customized version of the Dijkstra Algorithm, incorporating adjustments to handle pairs of $(\ell_e, \sigma_e)$. These pairs guide the algorithm's decision-making during the search phase to determine whether a specific vertex should be included in the set of edges \(E'\) connected to vertex \(u\) or not. Specifically, the value of \(\sigma\) is modified to \( -1 \) selectively during the exploration process when the algorithm encounters a current vertex \(c \in V\) and a neighboring vertex \(n \notin S\).
 
-With this algorithm, constructing a Min Overlay Graph would have a time complexity of $O(E \ log \ V * S)$. However, this report's implementation towards this approach only explores the construction of the Min Overlay Graph such that any query $v \in S$ has a time complexity of $O(1)$. Looking at variations of similar implementations, this algorithm can also be paired with Dijkstra to search a shortest-path between two vertices where $(u,v) \notin S$. Ultimately, this algorithm can speed up a shortest-path problem partially if $S \subset V$ else then Dijkstra with a Min Overlay Prioritization can aid to reduce the search space.
+With this algorithm, constructing a Min Overlay Graph would have a time complexity of $O((E \ log \ V) * S)$. However, this report's implementation towards this approach only explores the construction of the Min Overlay Graph such that any query $v \in S$ has a time complexity of $O(1)$. Looking at variations of similar implementations, this algorithm can also be paired with Dijkstra to search a shortest-path between two vertices where $(u,v) \notin S$. Ultimately, this algorithm can speed up a shortest-path problem partially if $S \subset V$ else then Dijkstra with a Min Overlay Prioritization can aid to reduce the search space.
 
 \section{Experimental Results}
 
 \subsection{Setup}
 
-For this report's experimentation, the author analyzes the aforementioned algorithms using an Apple M1 Chip with 8 GB Memory. All algorithm implementations are using Go 1.18+ with base implementations (no external libraries are used). The scope of analysis this report could achieve is bounded to this hardware specification. The experiment is conducted on 6 Benchmarks randomly created to form a Test Case of 5000 Shortest-Path Problems each. Source code can be found at \href{https://github.com/abhishtagatya/graf}{Github : abhishtagatya/graf}
+For this report's experimentation, the author analyzes the aforementioned algorithms using an Apple M1 Chip with 8 GB Memory. All algorithm implementations are using Go 1.18+ with base implementations (no external libraries are used). The scope of analysis this report could achieve is bounded to this hardware specification. The experiment is conducted on 6 Benchmarks randomly created to form a Test Case of 5000 Shortest-Path Problems each. Source code can be found at \href{https://github.com/abhishtagatya/graf}{Github : abhihtagatya/graf}
 
 \subsection{Average Visits and Query Time}
 
@@ -180,7 +191,7 @@ The author's objective to reduce the number of visited nodes per query, which re
     \label{tab:avgvq}
 \end{table}
 
-Table \ref{tab:avgvq} displays the performance of each algorithm to perform in each benchmark sets. The author also includes the original implementation of Dijkstra's algorithm compared to the baseline implementation of single-source single-target Dijkstra's algorithm to visualize the how a single visit to the target vertex can conclude the minimal cost between a source vertex and a target vertex. The analysis shows that for this particular graph the results can be reduces to $\sim37\%$ of the original search space.
+Table \ref{tab:avgvq} displays the performance of each algorithm to perform in each benchmark sets. The author also includes the original implementation of Dijkstra's algorithm compared to the baseline implementation of single-source single-target Dijkstra's algorithm to visualize the how a single visit to the target vertex can conclude the minimal cost between a source vertex and a target vertex.
 
 Comparing the baseline with the A* Haversine algorithm displays that the applied heuristics to estimate the cost between a neighboring vertex to the end vertex can improve the algorithm further by $\sim41\%$. However, there has been cases recorded that shows the Average Query Time on A* Haversine algorithm is slightly higher than the baseline even though the search space is reduced. Hypothesis towards this might be due to cases where a shortest-path is not found (therefore has a distance of $\infty$) and thus the trying to compensate by finding unnecessary vertex.
 
