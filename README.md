@@ -13,3 +13,4 @@ Network Engineering
 ### Quick References
 - LaTeX Math Symbols [📚](https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols)
 - Psuedo Code Documentation [📚](https://texdoc.org/serve/algorithmicx/0)
+- Minted Code Highlighting [📚](https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted)
