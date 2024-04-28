@@ -10,7 +10,7 @@ Network Engineering
 - Network Monitoring Report [📜](https://github.com/abhishtagatya/latexku/tree/main/Network%20Monitoring%20Project)
 
 Image Processing
-- Network Monitoring Report [📜](https://github.com/abhishtagatya/latexku/tree/main/Background%20Substitution)
+- Background Substitution Techniques on Human Segmentation Dataset [📜](https://github.com/abhishtagatya/latexku/tree/main/Background%20Substitution)
 
 
 ### Quick References
