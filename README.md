@@ -9,6 +9,9 @@ Graph Algorithms
 Network Engineering
 - Network Monitoring Report [📜](https://github.com/abhishtagatya/latexku/tree/main/Network%20Monitoring%20Project)
 
+Image Processing
+- Network Monitoring Report [📜](https://github.com/abhishtagatya/latexku/tree/main/Background%20Substitution)
+
 
 ### Quick References
 - LaTeX Math Symbols [📚](https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols)
