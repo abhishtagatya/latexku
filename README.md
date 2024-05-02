@@ -12,6 +12,9 @@ Network Engineering
 Image Processing
 - Background Substitution Techniques on Human Segmentation Dataset [📜](https://github.com/abhishtagatya/latexku/tree/main/Background%20Substitution)
 
+Cyber/Physical System
+- Vehicle Cruise Control System: Modeling, Simulation, and Control Analysis in Matlab/Simulink [📜](https://github.com/abhishtagatya/latexku/tree/main/Simple%20Vehicle%20Cruise%20Control%20System)
+
 
 ### Quick References
 - LaTeX Math Symbols [📚](https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols)
